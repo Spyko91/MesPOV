@@ -987,6 +987,26 @@
             "FPS", "MMORPG", "ActionRPG"
         ];
 
+        // ==================== VIDÉOS PAR DÉFAUT ====================
+        // Si aucune vidéo n'existe, on en crée une par défaut
+        if (videos.length === 0) {
+            videos = [
+                {
+                     id: 1,
+                    title: "Mon premier POV Gaming",
+                    description: "Découvre mes meilleurs moments de jeu !",
+                    link: "https://youtube.com/watch?v=5qap5aO4i9A", // Remplace par TA vidéo
+                    videoId: "5qap5aO4i9A", // Remplace par l'ID de TA vidéo
+                    date: new Date().toISOString(),
+                    views: 0,
+                    likes: 0,
+                    likedBy: [],
+                    categories: ["FPS"],
+                    comments: []
+                }
+            ];
+            localStorage.setItem('videos', JSON.stringify(videos));
+        }
         // ==================== ÉTAT ====================
         let videos = JSON.parse(localStorage.getItem('videos')) || [];
         let isAdmin = localStorage.getItem('isAdmin') === 'true';
@@ -1012,7 +1032,7 @@
                 ...video,
                 likes: video.likes || 0,
                 likedBy: video.likedBy || [],
-                categories: video.categories || [],
+                : video. || [],
                 views: video.views || 0,
                 comments: video.comments || []
             }));
