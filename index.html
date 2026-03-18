@@ -778,7 +778,7 @@
             width: 90%;
             max-width: 1000px;
             background: #000;
-            border: none; /* Suppression de la bordure rétro */
+            border: none;
             box-shadow: 0 0 30px rgba(255, 0, 0, 0.5);
         }
 
@@ -982,21 +982,25 @@
 
     <script>
         // ==================== CONFIGURATION ====================
-        const ADMIN_PASSWORD = "SpYkO91420!";
+        const ADMIN_PASSWORD = "admin123";
         const CATEGORIES = [
-            "FPS", "MMORPG", "ActionRPG"
+            "FPS", "MMORPG", "ActionRPG", "AVENTURE", 
+            "SPORT", "COURSE", "RETRO", "INDIE"
         ];
 
         // ==================== VIDÉOS PAR DÉFAUT ====================
-        // Si aucune vidéo n'existe, on en crée une par défaut
+        // Cette partie crée une première vidéo visible par tout le monde
+        let videos = JSON.parse(localStorage.getItem('videos')) || [];
+        
         if (videos.length === 0) {
+            // Vidéo d'exemple - Remplace par ta propre vidéo !
             videos = [
                 {
                     id: 1,
                     title: "Mon premier POV Gaming",
                     description: "Découvre mes meilleurs moments de jeu !",
-                    link: "https://www.youtube.com/watch?v=vNkPiOkwvpU&t=331s", // Remplace par TA vidéo
-                    videoId: "vNkPiOkwvpU&t=331s", // Remplace par l'ID de TA vidéo
+                    link: "https://youtube.com/watch?v=5qap5aO4i9A", // Remplace par TA vidéo
+                    videoId: "5qap5aO4i9A", // Remplace par l'ID de TA vidéo
                     date: new Date().toISOString(),
                     views: 0,
                     likes: 0,
@@ -1007,8 +1011,8 @@
             ];
             localStorage.setItem('videos', JSON.stringify(videos));
         }
+
         // ==================== ÉTAT ====================
-        let videos = JSON.parse(localStorage.getItem('videos')) || [];
         let isAdmin = localStorage.getItem('isAdmin') === 'true';
         let currentVideoId = null;
         let player = null;
@@ -1032,7 +1036,7 @@
                 ...video,
                 likes: video.likes || 0,
                 likedBy: video.likedBy || [],
-                : video. || [],
+                categories: video.categories || [],
                 views: video.views || 0,
                 comments: video.comments || []
             }));
@@ -1441,8 +1445,8 @@
                 return `
                     <div class="video-card">
                         <div class="thumbnail-container" onclick="playVideo(${originalIndex})">
-                            <img class="thumbnail" src="https://img.youtube.com/vi/${video.videoId}/hqdefault.jpg" 
-                                 onerror="this.src='https://img.youtube.com/vi/${video.videoId}/mqdefault.jpg'; this.onerror=null;">
+                            <img class="thumbnail" src="https://img.youtube.com/vi/${video.videoId}/maxresdefault.jpg" 
+                                 onerror="this.src='https://img.youtube.com/vi/${video.videoId}/hqdefault.jpg'">
                             <div class="play-overlay">
                                 <div class="play-button">▶</div>
                             </div>
