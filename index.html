@@ -820,15 +820,27 @@
             color: #ff0;
             font-size: 16px;
             margin-bottom: 20px;
+
+            /* Désactive les effets rétro pendant la lecture vidéo */
+            .video-player.active ~ body::before,
+            .video-player.active ~ body::after,
+            .video-player.active + * body::before,
+            .video-player.active + * body::after {
+                display: none !important;
+            }
+
+            .video-player.active .player-container {
+                border: none; /* Enlève la bordure épaisse autour de la vidéo */
+            }
         }
     </style>
 </head>
 <body>
     <header>
         <div class="header-content">
-            <a href="https://www.youtube.com/@spykotwitch2532" target="_blank" class="logo" style="text-decoration: none;">
-                <span>🎮</span>
-                <span>spyko.ytb</span>
+          <a href="https://www.youtube.com/@spykotwitch2532" target="_blank" class="logo" style="text-decoration: none;">
+                <span style="color: #ff0000; font-size: 32px; filter: drop-shadow(0 0 5px #ff0000);">▶️</span>
+                <span style="color: #ff0000;">spyko.ytb</span>
             </a>
             
             <div class="search-section">
