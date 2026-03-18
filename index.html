@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Spyko.ytb - Arcade POV</title>
+    <title>Spyko.ytb - Mes POV Gaming</title>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
         
@@ -22,7 +22,7 @@
             position: relative;
         }
 
-        /* Effet scanlines rétro */
+        /* Effet scanlines rétro (sera désactivé pendant la vidéo) */
         body::before {
             content: "";
             position: fixed;
@@ -37,9 +37,10 @@
                 transparent 5px);
             pointer-events: none;
             z-index: 9999;
+            transition: opacity 0.3s;
         }
 
-        /* Effet de lumière CRT */
+        /* Effet de lumière CRT (sera désactivé pendant la vidéo) */
         body::after {
             content: "";
             position: fixed;
@@ -50,6 +51,16 @@
             background: radial-gradient(circle at 50% 50%, transparent 0%, rgba(0, 0, 0, 0.4) 100%);
             pointer-events: none;
             z-index: 9998;
+            transition: opacity 0.3s;
+        }
+
+        /* Désactivation des effets rétro quand le player est actif */
+        .video-player.active ~ body::before,
+        .video-player.active ~ body::after,
+        body:has(.video-player.active)::before,
+        body:has(.video-player.active)::after {
+            opacity: 0 !important;
+            pointer-events: none !important;
         }
 
         header {
@@ -91,8 +102,15 @@
         }
 
         .logo span:first-child {
-            font-size: 24px;
-            filter: drop-shadow(0 0 10px #ff0);
+            font-size: 32px;
+            color: #ff0000;
+            filter: drop-shadow(0 0 10px #ff0000);
+            transition: all 0.3s;
+        }
+
+        .logo:hover span:first-child {
+            filter: drop-shadow(0 0 20px #ff0000);
+            transform: scale(1.1);
         }
 
         /* Section recherche et filtres */
@@ -531,13 +549,14 @@
         .play-button {
             width: 50px;
             height: 50px;
-            background: #ff0;
-            color: #000;
+            background: #ff0000;
+            color: #fff;
             font-size: 20px;
             display: flex;
             justify-content: center;
             align-items: center;
-            border: 2px solid #0f0;
+            border: 2px solid #ff0;
+            box-shadow: 0 0 20px #ff0000;
         }
 
         .video-categories {
@@ -759,7 +778,8 @@
             width: 90%;
             max-width: 1000px;
             background: #000;
-            border: 4px solid #ff0;
+            border: none; /* Suppression de la bordure rétro */
+            box-shadow: 0 0 30px rgba(255, 0, 0, 0.5);
         }
 
         .close-player {
@@ -820,26 +840,14 @@
             color: #ff0;
             font-size: 16px;
             margin-bottom: 20px;
-
-            /* Désactive les effets rétro pendant la lecture vidéo */
-            .video-player.active ~ body::before,
-            .video-player.active ~ body::after,
-            .video-player.active + * body::before,
-            .video-player.active + * body::after {
-                display: none !important;
-            }
-
-            .video-player.active .player-container {
-                border: none; /* Enlève la bordure épaisse autour de la vidéo */
-            }
         }
     </style>
 </head>
 <body>
     <header>
         <div class="header-content">
-          <a href="https://www.youtube.com/@spykotwitch2532" target="_blank" class="logo" style="text-decoration: none;">
-                <span style="color: #ff0000; font-size: 32px; filter: drop-shadow(0 0 5px #ff0000);">▶️</span>
+            <a href="https://www.youtube.com/@spykotwitch2532" target="_blank" class="logo" style="text-decoration: none;">
+                <span>▶️</span>
                 <span style="color: #ff0000;">spyko.ytb</span>
             </a>
             
@@ -969,14 +977,15 @@
     </div>
 
     <footer>
-        <p>© 2026 - SPYKO.YTB ★ TOUS DROITS RÉSERVÉS</p>
+        <p>© 2026 - SPYKO.YTB ★ MES POV GAMING</p>
     </footer>
 
     <script>
         // ==================== CONFIGURATION ====================
-        const ADMIN_PASSWORD = "SpYkO91420!";
+        const ADMIN_PASSWORD = "admin123";
         const CATEGORIES = [
-            "FPS", "MMORPG", "ActionRPG"
+            "FPS", "MMORPG", "ActionRPG", "AVENTURE", 
+            "SPORT", "COURSE", "RETRO", "INDIE"
         ];
 
         // ==================== ÉTAT ====================
