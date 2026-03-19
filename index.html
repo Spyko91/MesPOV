@@ -1239,17 +1239,18 @@
 
         async function toggleLike(videoIndex) {
             const video = videos[videoIndex];
-            if (!video || !video.videoId) return;
-            
-            const viewerId = localStorage.getItem('visitorId') || 'visiteur_' + Date.now();
-            
-            if (!localStorage.getItem('visitorId')) {
-                localStorage.setItem('visitorId', viewerId);
+            if (!video || !video.videoId) {
+                console.error('Vidéo ou videoId manquant');
+                return;
             }
+    
+            const viewerId = localStorage.getItem('visitorId') || 'visiteur_' + Date.now();
+            localStorage.setItem('visitorId', viewerId);
 
             try {
                 const response = await fetch(API_URL, {
                     method: 'POST',
+                    mode: 'cors',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
                         action: 'toggleLike',
@@ -1257,10 +1258,15 @@
                         viewerId: viewerId
                     })
                 });
-                
+
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+
                 const result = await response.json();
-                
+        
                 if (result.meta.status === 200) {
+                    // Mise à jour locale
                     video.likes = result.data.newLikes;
                     if (result.data.hasLiked) {
                         video.likedBy = (video.likedBy || []).filter(id => id !== viewerId);
@@ -1268,19 +1274,21 @@
                         if (!video.likedBy) video.likedBy = [];
                         video.likedBy.push(viewerId);
                     }
-                    
                     filterVideos();
                     if (isAdmin) updateStats();
+                } else {
+                    console.error('Erreur API like:', result.meta.message);
                 }
             } catch (error) {
                 console.error('Erreur like:', error);
+                alert('Impossible de liker pour le moment. Vérifie ta connexion.');
             }
         }
 
         async function addComment(videoIndex) {
             const input = document.getElementById(`comment-${videoIndex}`);
             if (!input) return;
-            
+    
             const text = input.value.trim();
             if (!text) return;
 
@@ -1290,6 +1298,7 @@
             try {
                 const response = await fetch(API_URL, {
                     method: 'POST',
+                    mode: 'cors',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
                         action: 'addComment',
@@ -1300,18 +1309,25 @@
                         }
                     })
                 });
-                
+
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+
                 const result = await response.json();
-                
+        
                 if (result.meta.status === 201 || result.meta.status === 200) {
                     if (!video.comments) video.comments = [];
                     video.comments.push(result.data);
                     input.value = '';
                     filterVideos();
                     if (isAdmin) updateStats();
+                } else {
+                    console.error('Erreur API commentaire:', result.meta.message);
                 }
             } catch (error) {
                 console.error('Erreur commentaire:', error);
+                alert('Impossible d\'ajouter le commentaire pour le moment.');
             }
         }
 
