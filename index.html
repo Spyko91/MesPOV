@@ -1444,8 +1444,8 @@
                 return `
                     <div class="video-card">
                         <div class="thumbnail-container" onclick="playVideo(${originalIndex})">
-                            <img class="thumbnail" src="https://img.youtube.com/vi/${video.videoId}/maxresdefault.jpg" 
-                                 onerror="this.src='https://img.youtube.com/vi/${video.videoId}/hqdefault.jpg'">
+                            <img class="thumbnail" src="https://img.youtube.com/vi/${video.videoId}/hqdefault.jpg" 
+                                 onerror="this.src='https://img.youtube.com/vi/${video.videoId}/mqdefault.jpg'; this.onerror=null;">
                             <div class="play-overlay">
                                 <div class="play-button">▶</div>
                             </div>
