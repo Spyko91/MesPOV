@@ -1042,8 +1042,7 @@
         const CATEGORIES = ["FPS", "MMORPG", "ActionRPG"];
         
         // ==================== CONFIGURATION API GOOGLE SHEETS ====================
-        // IMPORTANT: Remplace par ta vraie URL Apps Script
-        const API_URL = 'https://script.google.com/macros/s/AKfycbzjgpi0_p1oA2UoKPy8wqPqzCZY1UuiOwa86Y0Qje3XGtfKn2W1ipGF36B8z2wCD0jt6A/exec'; // ← À REMPLACER !
+        const API_URL = 'https://script.google.com/macros/s/AKfycbzjgpi0_p1oA2UoKPy8wqPqzCZY1UuiOwa86Y0Qje3XGtfKn2W1ipGF36B8z2wCD0jt6A/exec';
         
         // ==================== ÉTAT ====================
         let videos = [];
@@ -1058,11 +1057,10 @@
 
         // ==================== INITIALISATION ====================
         document.addEventListener('DOMContentLoaded', async () => {
-             await loadVideos();  // Charge les vidéos UNE SEULE FOIS
+            await loadVideos();
             updateAdminUI();
             renderCategoriesFilter();
             renderCategoriesSelector();
-            // Ne pas appeler filterVideos() ici, loadVideos() le fait déjà
         });
 
         // ==================== FONCTIONS API ====================
@@ -1071,22 +1069,9 @@
             try {
                 const response = await fetch(`${API_URL}?action=getAll`);
                 const result = await response.json();
-        
+                
                 if (result.meta.status === 200 && result.data) {
-                    // NETTOYAGE : Supprimer les doublons basés sur l'ID
-                    const uniqueVideos = [];
-                    const seenIds = new Set();
-            
-                    result.data.forEach(video => {
-                        if (!seenIds.has(video.id)) {
-                            seenIds.add(video.id);
-                            uniqueVideos.push(video);
-                        }
-                    });
-            
-                    console.log(`Nettoyage: ${result.data.length} vidéos trouvées, ${uniqueVideos.length} uniques`);
-            
-                    videos = uniqueVideos.map(video => ({
+                    videos = result.data.map(video => ({
                         id: video.id || '',
                         title: video.title || 'Sans titre',
                         description: video.description || '',
@@ -1099,8 +1084,7 @@
                         categories: video.categories || [],
                         comments: video.comments || []
                     }));
-            
-                    console.log('Vidéos après nettoyage:', videos.length);
+                    console.log('Vidéos chargées:', videos.length);
                 } else {
                     console.error('Erreur API:', result.meta?.message || 'Données invalides');
                     videos = [];
@@ -1109,7 +1093,7 @@
                 console.error('Erreur chargement vidéos:', error);
                 videos = [];
             }
-    
+            
             filterVideos();
         }
 
