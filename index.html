@@ -1071,9 +1071,22 @@
             try {
                 const response = await fetch(`${API_URL}?action=getAll`);
                 const result = await response.json();
-                
+        
                 if (result.meta.status === 200 && result.data) {
-                    videos = result.data.map(video => ({
+                    // NETTOYAGE : Supprimer les doublons basés sur l'ID
+                    const uniqueVideos = [];
+                    const seenIds = new Set();
+            
+                    result.data.forEach(video => {
+                        if (!seenIds.has(video.id)) {
+                            seenIds.add(video.id);
+                            uniqueVideos.push(video);
+                        }
+                    });
+            
+                    console.log(`Nettoyage: ${result.data.length} vidéos trouvées, ${uniqueVideos.length} uniques`);
+            
+                    videos = uniqueVideos.map(video => ({
                         id: video.id || '',
                         title: video.title || 'Sans titre',
                         description: video.description || '',
@@ -1086,7 +1099,8 @@
                         categories: video.categories || [],
                         comments: video.comments || []
                     }));
-                    console.log('Vidéos chargées:', videos.length);
+            
+                    console.log('Vidéos après nettoyage:', videos.length);
                 } else {
                     console.error('Erreur API:', result.meta?.message || 'Données invalides');
                     videos = [];
@@ -1095,7 +1109,7 @@
                 console.error('Erreur chargement vidéos:', error);
                 videos = [];
             }
-            
+    
             filterVideos();
         }
 
