@@ -1058,10 +1058,11 @@
 
         // ==================== INITIALISATION ====================
         document.addEventListener('DOMContentLoaded', async () => {
-            await loadVideos();
+             await loadVideos();  // Charge les vidéos UNE SEULE FOIS
             updateAdminUI();
             renderCategoriesFilter();
             renderCategoriesSelector();
+            // Ne pas appeler filterVideos() ici, loadVideos() le fait déjà
         });
 
         // ==================== FONCTIONS API ====================
