@@ -22,7 +22,6 @@
             position: relative;
         }
 
-        /* Effet scanlines rétro */
         body::before {
             content: "";
             position: fixed;
@@ -56,7 +55,6 @@
             opacity: 0 !important;
         }
 
-        /* Animations */
         @keyframes bounce {
             0%, 100% { transform: translateY(0); }
             50% { transform: translateY(-5px); }
@@ -196,7 +194,6 @@
             color: #000;
         }
 
-        /* Section utilisateur */
         .user-section {
             display: flex;
             align-items: center;
@@ -620,7 +617,6 @@
         </div>
     </header>
 
-    <!-- Actions admin (visible seulement après connexion) -->
     <div class="admin-actions" id="adminActions" style="display: none;">
         <button class="add-video-btn" onclick="openAddModal()">➕ PUBLIER</button>
     </div>
@@ -659,7 +655,6 @@
         </div>
     </div>
 
-    <!-- Lecteur vidéo -->
     <div class="video-player" id="videoPlayer">
         <div class="player-container">
             <button class="close-player" onclick="closePlayer()">✕</button>
@@ -669,7 +664,6 @@
         </div>
     </div>
 
-    <!-- Grille des vidéos -->
     <div class="videos-container">
         <div class="videos-grid" id="videosGrid"></div>
     </div>
@@ -684,24 +678,28 @@
         const CATEGORIES = ["FPS", "MMORPG", "ActionRPG"];
         
         // ==================== VOS VIDÉOS ====================
-        // Stockage dans localStorage (persistant même après fermeture)
-        let videos = JSON.parse(localStorage.getItem('spyko_videos')) || [
+        // AJOUTE TES VIDÉOS ICI !
+        let videos = [
             {
                 id: 1,
                 title: "Mon premier POV Gaming",
                 description: "Découvre mes meilleurs moments de jeu !",
                 videoId: "dQw4w9WgXcQ",
-                date: new Date().toISOString().split('T')[0],
+                date: "2026-03-23",
                 categories: ["FPS"]
             }
+            // AJOUTE TES AUTRES VIDÉOS ICI, PAR EXEMPLE :
+            // {
+            //     id: 2,
+            //     title: "Mon deuxième POV",
+            //     description: "Description de ma deuxième vidéo",
+            //     videoId: "L'ID_DE_TA_VIDEO",
+            //     date: "2026-03-23",
+            //     categories: ["MMORPG"]
+            // }
         ];
         
-        // Sauvegarde initiale si nécessaire
-        if (JSON.parse(localStorage.getItem('spyko_videos')) === null) {
-            localStorage.setItem('spyko_videos', JSON.stringify(videos));
-        }
-        
-        // ==================== ÉTAT ADMIN ====================
+        // ==================== ÉTAT ====================
         let isAdmin = localStorage.getItem('spyko_isAdmin') === 'true';
         let currentVideoId = null;
         let player = null;
@@ -762,10 +760,6 @@
         }
 
         // ==================== GESTION DES VIDÉOS ====================
-        function saveVideos() {
-            localStorage.setItem('spyko_videos', JSON.stringify(videos));
-        }
-
         function addVideo() {
             if (!isAdmin) {
                 alert('Vous devez être connecté en admin pour publier');
@@ -803,10 +797,13 @@
             };
 
             videos.push(newVideo);
-            saveVideos();
+            
+            // Afficher les nouvelles vidéos à copier dans le code
+            const videoListCode = JSON.stringify(videos, null, 8).replace(/^\[\s*/, '').replace(/\s*\]$/, '');
+            alert('Vidéo ajoutée !\n\n⚠️ IMPORTANT :\nPour que tous tes visiteurs voient cette vidéo, tu dois copier cette liste dans le code HTML.\n\n1. Ouvre ton fichier index.html sur GitHub\n2. Remplace la liste "videos = [...]" par celle-ci :\n\n' + JSON.stringify(videos, null, 4));
+            
             closeAddModal();
             filterVideos();
-            alert('Vidéo publiée avec succès !');
         }
 
         function deleteVideo(id) {
@@ -814,9 +811,10 @@
             
             if (confirm('SUPPRIMER CETTE VIDÉO ?')) {
                 videos = videos.filter(v => v.id !== id);
-                saveVideos();
+                
+                alert('Vidéo supprimée !\n\n⚠️ IMPORTANT :\nPour que tous tes visiteurs voient cette modification, tu dois mettre à jour le code HTML sur GitHub avec la nouvelle liste de vidéos.');
+                
                 filterVideos();
-                alert('Vidéo supprimée !');
             }
         }
 
