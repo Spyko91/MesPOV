@@ -37,7 +37,6 @@
                 transparent 5px);
             pointer-events: none;
             z-index: 9999;
-            transition: opacity 0.3s;
         }
 
         body::after {
@@ -50,7 +49,6 @@
             background: radial-gradient(circle at 50% 50%, transparent 0%, rgba(0, 0, 0, 0.4) 100%);
             pointer-events: none;
             z-index: 9998;
-            transition: opacity 0.3s;
         }
 
         .video-player.active ~ body::before,
@@ -196,55 +194,6 @@
         .category-tag:hover, .category-tag.active {
             background: #0f0;
             color: #000;
-        }
-
-        .user-section {
-            display: flex;
-            align-items: center;
-            gap: 15px;
-        }
-
-        .login-btn {
-            background: #000;
-            border: 2px solid #ff0;
-            color: #ff0;
-            padding: 8px 15px;
-            font-family: 'Press Start 2P', cursive;
-            font-size: 10px;
-            cursor: pointer;
-        }
-
-        .login-btn:hover {
-            background: #ff0;
-            color: #000;
-        }
-
-        .user-info {
-            display: none;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .user-info.admin {
-            display: flex;
-        }
-
-        .user-badge {
-            background: #ff0;
-            color: #000;
-            padding: 5px 10px;
-            font-size: 8px;
-            border: 2px solid #f00;
-        }
-
-        .logout-btn {
-            background: #f00;
-            border: 2px solid #ff0;
-            color: #fff;
-            padding: 5px 10px;
-            font-family: 'Press Start 2P', cursive;
-            font-size: 8px;
-            cursor: pointer;
         }
 
         .admin-actions {
@@ -398,7 +347,7 @@
 
         .video-meta {
             display: flex;
-            justify-content: space-between;
+            justify-content: flex-end;
             color: #ff0;
             margin: 10px 0;
             font-size: 7px;
@@ -414,24 +363,14 @@
             display: flex;
         }
 
-        .edit-btn, .delete-btn {
+        .delete-btn {
             padding: 8px 15px;
+            background: #f00;
+            border: 2px solid #ff0;
+            color: #fff;
             font-family: 'Press Start 2P', cursive;
             font-size: 7px;
             cursor: pointer;
-            border: 2px solid;
-        }
-
-        .edit-btn {
-            background: #00f;
-            border-color: #ff0;
-            color: #fff;
-        }
-
-        .delete-btn {
-            background: #f00;
-            border-color: #ff0;
-            color: #fff;
         }
 
         .video-player {
@@ -584,12 +523,6 @@
             grid-column: 1/-1;
         }
 
-        .error-message {
-            color: #f00;
-            font-size: 8px;
-            margin-bottom: 15px;
-        }
-
         @media (max-width: 768px) {
             .header-content {
                 flex-direction: column;
@@ -621,34 +554,13 @@
                 <div class="categories-filter" id="categoriesFilter"></div>
             </div>
             
-            <div class="user-section">
-                <div class="user-info" id="userInfo">
-                    <span class="user-badge">👑 ADMIN</span>
-                    <button class="logout-btn" onclick="logout()">QUITTER</button>
-                </div>
-                <button class="login-btn" id="loginBtn" onclick="openLoginModal()">ADMIN</button>
+            <div class="admin-actions" id="adminActions" style="display: none;">
+                <button class="add-video-btn" onclick="openAddModal()">➕ PUBLIER</button>
             </div>
         </div>
     </header>
 
-    <!-- Actions admin -->
-    <div class="admin-actions" id="adminActions" style="display: none;">
-        <button class="add-video-btn" onclick="openAddModal()">➕ PUBLIER</button>
-    </div>
-
     <!-- Modals -->
-    <div class="modal" id="loginModal">
-        <div class="modal-content">
-            <h2>🔐 ADMIN</h2>
-            <div class="error-message" id="loginError"></div>
-            <input type="password" id="adminPassword" placeholder="MOT DE PASSE">
-            <div class="modal-buttons">
-                <button class="cancel-btn" onclick="closeLoginModal()">ANNULER</button>
-                <button class="save-btn" onclick="checkPassword()">VALIDER</button>
-            </div>
-        </div>
-    </div>
-
     <div class="modal" id="addVideoModal">
         <div class="modal-content">
             <h2>➕ NOUVELLE VIDÉO</h2>
@@ -657,27 +569,15 @@
             <input type="text" id="youtubeLink" placeholder="LIEN YOUTUBE">
             
             <h3 style="color:#ff0; font-size:10px; margin:10px 0;">CATÉGORIES</h3>
-            <div class="categories-selector" id="categoriesSelector"></div>
+            <div class="categories-selector" id="categoriesSelector">
+                <label class="category-checkbox"><input type="checkbox" value="FPS"> FPS</label>
+                <label class="category-checkbox"><input type="checkbox" value="MMORPG"> MMORPG</label>
+                <label class="category-checkbox"><input type="checkbox" value="ActionRPG"> ActionRPG</label>
+            </div>
             
             <div class="modal-buttons">
                 <button class="cancel-btn" onclick="closeAddModal()">ANNULER</button>
                 <button class="save-btn" onclick="addVideo()">PUBLIER</button>
-            </div>
-        </div>
-    </div>
-
-    <div class="modal" id="editVideoModal">
-        <div class="modal-content">
-            <h2>✏️ MODIFIER</h2>
-            <input type="text" id="editVideoTitle" placeholder="TITRE">
-            <textarea id="editVideoDescription" placeholder="DESCRIPTION" rows="3"></textarea>
-            
-            <h3 style="color:#ff0; font-size:10px; margin:10px 0;">CATÉGORIES</h3>
-            <div class="categories-selector" id="editCategoriesSelector"></div>
-            
-            <div class="modal-buttons">
-                <button class="cancel-btn" onclick="closeEditModal()">ANNULER</button>
-                <button class="save-btn" onclick="saveEdit()">VALIDER</button>
             </div>
         </div>
     </div>
@@ -703,62 +603,39 @@
 
     <script>
         // ==================== CONFIGURATION ====================
-        const ADMIN_PASSWORD = "SpYkO91420!";
         const CATEGORIES = ["FPS", "MMORPG", "ActionRPG"];
         
-        // ==================== CONFIGURATION API ====================
-        const API_URL = 'https://script.google.com/macros/s/AKfycbzFaJDrzPCwC2mRVEmyYyOZEfWR5lyIqwPPs7SZUH3mpemFi84zN8YP-P7wWiR3kqUo/exec';
+        // ==================== VOS VIDÉOS (MODIFIEZ ICI !) ====================
+        // Pour ajouter une vidéo, copiez une ligne comme celle-ci et modifiez les infos :
+        // { id: 1, title: "Titre", description: "Description", videoId: "ID_YOUTUBE", date: "2024-01-01", categories: ["FPS"] }
+        
+        let videos = [
+            {
+                id: 1,
+                title: "Mon premier POV Gaming",
+                description: "Découvre mes meilleurs moments de jeu !",
+                videoId: "dQw4w9WgXcQ",
+                date: "2024-03-23",
+                categories: ["FPS"]
+            }
+        ];
         
         // ==================== ÉTAT ====================
-        let videos = [];
-        let isAdmin = localStorage.getItem('isAdmin') === 'true';
         let currentVideoId = null;
         let player = null;
-        let editingIndex = null;
         let currentFilter = {
             search: '',
             category: null
         };
 
         // ==================== INITIALISATION ====================
-        document.addEventListener('DOMContentLoaded', async () => {
-            await loadVideos();
-            updateAdminUI();
+        document.addEventListener('DOMContentLoaded', () => {
             renderCategoriesFilter();
-            renderCategoriesSelector();
+            filterVideos();
         });
 
-        // ==================== FONCTIONS API ====================
-        
-        async function loadVideos() {
-            try {
-                const response = await fetch(`${API_URL}?action=getAll`);
-                const result = await response.json();
-                
-                if (result.meta.status === 200 && result.data) {
-                    videos = result.data.map(video => ({
-                        id: video.id || '',
-                        title: video.title || 'Sans titre',
-                        description: video.description || '',
-                        videoId: video.videoId || '',
-                        link: video.link || '',
-                        date: video.date || new Date().toISOString(),
-                        categories: video.categories || []
-                    }));
-                    console.log('Vidéos chargées:', videos.length);
-                } else {
-                    console.error('Erreur API:', result.meta?.message || 'Données invalides');
-                    videos = [];
-                }
-            } catch (error) {
-                console.error('Erreur chargement vidéos:', error);
-                videos = [];
-            }
-            
-            filterVideos();
-        }
-
-        async function addVideo() {
+        // ==================== GESTION DES VIDÉOS ====================
+        function addVideo() {
             const title = document.getElementById('videoTitle')?.value.trim();
             const description = document.getElementById('videoDescription')?.value.trim();
             const link = document.getElementById('youtubeLink')?.value.trim();
@@ -779,91 +656,27 @@
                 categories.push(cb.value);
             });
 
+            const newId = Math.max(...videos.map(v => v.id), 0) + 1;
             const newVideo = {
-                id: Date.now().toString(),
+                id: newId,
                 title,
                 description: description || '',
-                link: `https://youtube.com/watch?v=${videoId}`,
                 videoId,
-                date: new Date().toISOString(),
+                date: new Date().toISOString().split('T')[0],
                 categories
             };
 
-            try {
-                const response = await fetch(API_URL, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        action: 'createVideo',
-                        data: newVideo
-                    })
-                });
-                
-                const result = await response.json();
-                
-                if (result.meta.status === 201 || result.meta.status === 200) {
-                    await loadVideos();
-                    closeAddModal();
-                    alert('Vidéo publiée avec succès !');
-                } else {
-                    alert('Erreur lors de la publication');
-                }
-            } catch (error) {
-                console.error('Erreur:', error);
-                alert('Erreur réseau');
-            }
+            videos.push(newVideo);
+            closeAddModal();
+            filterVideos();
+            alert('Vidéo ajoutée !');
         }
 
-        async function updateVideo(id, updatedData) {
-            try {
-                const response = await fetch(API_URL, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        action: 'updateVideo',
-                        id: id,
-                        data: updatedData
-                    })
-                });
-                
-                const result = await response.json();
-                
-                if (result.meta.status === 200) {
-                    await loadVideos();
-                    return true;
-                }
-                return false;
-            } catch (error) {
-                console.error('Erreur update:', error);
-                return false;
-            }
-        }
-
-        async function deleteVideo(index) {
-            if (!isAdmin) return;
-            
-            const video = videos[index];
-            if (!video) return;
-            
-            if (confirm('SUPPRIMER ?')) {
-                try {
-                    const response = await fetch(API_URL, {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({
-                            action: 'deleteVideo',
-                            id: video.id
-                        })
-                    });
-                    
-                    const result = await response.json();
-                    
-                    if (result.meta.status === 200) {
-                        await loadVideos();
-                    }
-                } catch (error) {
-                    console.error('Erreur suppression:', error);
-                }
+        function deleteVideo(id) {
+            if (confirm('SUPPRIMER CETTE VIDÉO ?')) {
+                videos = videos.filter(v => v.id !== id);
+                filterVideos();
+                alert('Vidéo supprimée !');
             }
         }
 
@@ -899,54 +712,6 @@
             filterVideos();
         }
 
-        // ==================== AUTHENTIFICATION ====================
-        function openLoginModal() {
-            const modal = document.getElementById('loginModal');
-            if (modal) modal.classList.add('active');
-            const passwordInput = document.getElementById('adminPassword');
-            if (passwordInput) passwordInput.value = '';
-            const errorDiv = document.getElementById('loginError');
-            if (errorDiv) errorDiv.textContent = '';
-        }
-
-        function closeLoginModal() {
-            const modal = document.getElementById('loginModal');
-            if (modal) modal.classList.remove('active');
-        }
-
-        function checkPassword() {
-            const passwordInput = document.getElementById('adminPassword');
-            const password = passwordInput ? passwordInput.value : '';
-            
-            if (password === ADMIN_PASSWORD) {
-                isAdmin = true;
-                localStorage.setItem('isAdmin', 'true');
-                closeLoginModal();
-                updateAdminUI();
-                filterVideos();
-            } else {
-                const errorDiv = document.getElementById('loginError');
-                if (errorDiv) errorDiv.textContent = 'ERREUR';
-            }
-        }
-
-        function logout() {
-            isAdmin = false;
-            localStorage.removeItem('isAdmin');
-            updateAdminUI();
-            filterVideos();
-        }
-
-        function updateAdminUI() {
-            const userInfo = document.getElementById('userInfo');
-            const loginBtn = document.getElementById('loginBtn');
-            const adminActions = document.getElementById('adminActions');
-            
-            if (userInfo) userInfo.classList.toggle('admin', isAdmin);
-            if (loginBtn) loginBtn.style.display = isAdmin ? 'none' : 'block';
-            if (adminActions) adminActions.style.display = isAdmin ? 'flex' : 'none';
-        }
-
         // ==================== UI ====================
         function renderCategoriesFilter() {
             const container = document.getElementById('categoriesFilter');
@@ -957,20 +722,6 @@
                     `<span class="category-tag" onclick="filterByCategory('${cat}')">${cat}</span>`
                 ).join('');
             container.innerHTML = html;
-        }
-
-        function renderCategoriesSelector() {
-            const html = CATEGORIES.map(cat => `
-                <label class="category-checkbox">
-                    <input type="checkbox" value="${cat}"> ${cat}
-                </label>
-            `).join('');
-            
-            const selector = document.getElementById('categoriesSelector');
-            const editSelector = document.getElementById('editCategoriesSelector');
-            
-            if (selector) selector.innerHTML = html;
-            if (editSelector) editSelector.innerHTML = html;
         }
 
         function extractVideoId(url) {
@@ -990,79 +741,15 @@
             const modal = document.getElementById('addVideoModal');
             if (modal) modal.classList.add('active');
             
-            const titleInput = document.getElementById('videoTitle');
-            const descInput = document.getElementById('videoDescription');
-            const linkInput = document.getElementById('youtubeLink');
-            
-            if (titleInput) titleInput.value = '';
-            if (descInput) descInput.value = '';
-            if (linkInput) linkInput.value = '';
-            
+            document.getElementById('videoTitle').value = '';
+            document.getElementById('videoDescription').value = '';
+            document.getElementById('youtubeLink').value = '';
             document.querySelectorAll('#categoriesSelector input').forEach(cb => cb.checked = false);
         }
 
         function closeAddModal() {
             const modal = document.getElementById('addVideoModal');
             if (modal) modal.classList.remove('active');
-        }
-
-        function openEditModal(index) {
-            const video = videos[index];
-            if (!video) return;
-            
-            editingIndex = index;
-            
-            const titleInput = document.getElementById('editVideoTitle');
-            const descInput = document.getElementById('editVideoDescription');
-            
-            if (titleInput) titleInput.value = video.title || '';
-            if (descInput) descInput.value = video.description || '';
-            
-            document.querySelectorAll('#editCategoriesSelector input').forEach(cb => {
-                cb.checked = (video.categories || []).includes(cb.value);
-            });
-            
-            const modal = document.getElementById('editVideoModal');
-            if (modal) modal.classList.add('active');
-        }
-
-        function closeEditModal() {
-            const modal = document.getElementById('editVideoModal');
-            if (modal) modal.classList.remove('active');
-            editingIndex = null;
-        }
-
-        async function saveEdit() {
-            if (editingIndex === null) return;
-            
-            const titleInput = document.getElementById('editVideoTitle');
-            const descInput = document.getElementById('editVideoDescription');
-            
-            const title = titleInput ? titleInput.value.trim() : '';
-            if (!title) {
-                alert('TITRE REQUIS');
-                return;
-            }
-
-            const categories = [];
-            document.querySelectorAll('#editCategoriesSelector input:checked').forEach(cb => {
-                categories.push(cb.value);
-            });
-
-            const video = videos[editingIndex];
-            const updatedData = {
-                title,
-                description: descInput ? descInput.value.trim() || '' : '',
-                categories
-            };
-
-            const success = await updateVideo(video.id, updatedData);
-            
-            if (success) {
-                closeEditModal();
-            } else {
-                alert('Erreur lors de la modification');
-            }
         }
 
         // ==================== LECTEUR ====================
@@ -1093,15 +780,14 @@
             });
         }
 
-        function playVideo(index) {
-            const video = videos[index];
-            if (!video || !video.videoId) return;
+        function playVideo(videoId) {
+            if (!videoId) return;
             
             const playerDiv = document.getElementById('videoPlayer');
             if (playerDiv) playerDiv.classList.add('active');
             
             loadYouTubeAPI();
-            initPlayer(video.videoId);
+            initPlayer(videoId);
         }
 
         function closePlayer() {
@@ -1119,50 +805,43 @@
                 grid.innerHTML = `
                     <div class="no-videos">
                         <h2>🎮 AUCUNE VIDÉO</h2>
-                        ${isAdmin ? '<button class="add-video-btn" onclick="openAddModal()">PUBLIER</button>' : ''}
+                        <button class="add-video-btn" onclick="openAddModal()">PUBLIER</button>
                     </div>
                 `;
                 return;
             }
 
-            grid.innerHTML = videosToShow.map((video, idx) => {
-                const originalIndex = videos.findIndex(v => v.id === video.id);
-                
-                return `
-                    <div class="video-card">
-                        <div class="thumbnail-container" onclick="playVideo(${originalIndex})">
-                            <img class="thumbnail" src="https://img.youtube.com/vi/${video.videoId || ''}/hqdefault.jpg" 
-                                 onerror="this.src='https://img.youtube.com/vi/${video.videoId || ''}/mqdefault.jpg'; this.onerror=null;">
-                            <div class="play-overlay">
-                                <div class="play-button">▶</div>
-                            </div>
-                            ${(video.categories || []).length ? `
-                                <div class="video-categories">
-                                    ${video.categories.map(cat => 
-                                        `<span class="video-category-badge">${cat}</span>`
-                                    ).join('')}
-                                </div>
-                            ` : ''}
+            grid.innerHTML = videosToShow.map(video => `
+                <div class="video-card">
+                    <div class="thumbnail-container" onclick="playVideo('${video.videoId}')">
+                        <img class="thumbnail" src="https://img.youtube.com/vi/${video.videoId}/hqdefault.jpg" 
+                             onerror="this.src='https://img.youtube.com/vi/${video.videoId}/mqdefault.jpg'; this.onerror=null;">
+                        <div class="play-overlay">
+                            <div class="play-button">▶</div>
                         </div>
-                        
-                        <div class="video-info">
-                            <h3 class="video-title" onclick="playVideo(${originalIndex})">${video.title || 'Sans titre'}</h3>
-                            <p class="video-description">${video.description || 'PAS DE DESCRIPTION'}</p>
-                            
-                            <div class="video-meta">
-                                <span>📅 ${new Date(video.date || Date.now()).toLocaleDateString()}</span>
+                        ${(video.categories || []).length ? `
+                            <div class="video-categories">
+                                ${video.categories.map(cat => 
+                                    `<span class="video-category-badge">${cat}</span>`
+                                ).join('')}
                             </div>
+                        ` : ''}
+                    </div>
+                    
+                    <div class="video-info">
+                        <h3 class="video-title" onclick="playVideo('${video.videoId}')">${video.title || 'Sans titre'}</h3>
+                        <p class="video-description">${video.description || 'PAS DE DESCRIPTION'}</p>
+                        
+                        <div class="video-meta">
+                            <span>📅 ${video.date || new Date().toLocaleDateString()}</span>
+                        </div>
 
-                            ${isAdmin ? `
-                                <div class="admin-controls show">
-                                    <button class="edit-btn" onclick="openEditModal(${originalIndex})">✏️ MODIF</button>
-                                    <button class="delete-btn" onclick="deleteVideo(${originalIndex})">🗑️ SUP</button>
-                                </div>
-                            ` : ''}
+                        <div class="admin-controls show">
+                            <button class="delete-btn" onclick="deleteVideo(${video.id})">🗑️ SUPPRIMER</button>
                         </div>
                     </div>
-                `;
-            }).join('');
+                </div>
+            `).join('');
         }
 
         window.onclick = (event) => {
