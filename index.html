@@ -196,6 +196,56 @@
             color: #000;
         }
 
+        /* Section utilisateur */
+        .user-section {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .login-btn {
+            background: #000;
+            border: 2px solid #ff0;
+            color: #ff0;
+            padding: 8px 15px;
+            font-family: 'Press Start 2P', cursive;
+            font-size: 10px;
+            cursor: pointer;
+        }
+
+        .login-btn:hover {
+            background: #ff0;
+            color: #000;
+        }
+
+        .user-info {
+            display: none;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .user-info.admin {
+            display: flex;
+        }
+
+        .user-badge {
+            background: #ff0;
+            color: #000;
+            padding: 5px 10px;
+            font-size: 8px;
+            border: 2px solid #f00;
+        }
+
+        .logout-btn {
+            background: #f00;
+            border: 2px solid #ff0;
+            color: #fff;
+            padding: 5px 10px;
+            font-family: 'Press Start 2P', cursive;
+            font-size: 8px;
+            cursor: pointer;
+        }
+
         .admin-actions {
             max-width: 1400px;
             margin: 20px auto;
@@ -523,6 +573,12 @@
             grid-column: 1/-1;
         }
 
+        .error-message {
+            color: #f00;
+            font-size: 8px;
+            margin-bottom: 15px;
+        }
+
         @media (max-width: 768px) {
             .header-content {
                 flex-direction: column;
@@ -554,13 +610,34 @@
                 <div class="categories-filter" id="categoriesFilter"></div>
             </div>
             
-            <div class="admin-actions" id="adminActions" style="display: none;">
-                <button class="add-video-btn" onclick="openAddModal()">➕ PUBLIER</button>
+            <div class="user-section">
+                <div class="user-info" id="userInfo">
+                    <span class="user-badge">👑 ADMIN</span>
+                    <button class="logout-btn" onclick="logout()">QUITTER</button>
+                </div>
+                <button class="login-btn" id="loginBtn" onclick="openLoginModal()">ADMIN</button>
             </div>
         </div>
     </header>
 
+    <!-- Actions admin (visible seulement après connexion) -->
+    <div class="admin-actions" id="adminActions" style="display: none;">
+        <button class="add-video-btn" onclick="openAddModal()">➕ PUBLIER</button>
+    </div>
+
     <!-- Modals -->
+    <div class="modal" id="loginModal">
+        <div class="modal-content">
+            <h2>🔐 ADMIN</h2>
+            <div class="error-message" id="loginError"></div>
+            <input type="password" id="adminPassword" placeholder="MOT DE PASSE">
+            <div class="modal-buttons">
+                <button class="cancel-btn" onclick="closeLoginModal()">ANNULER</button>
+                <button class="save-btn" onclick="checkPassword()">VALIDER</button>
+            </div>
+        </div>
+    </div>
+
     <div class="modal" id="addVideoModal">
         <div class="modal-content">
             <h2>➕ NOUVELLE VIDÉO</h2>
@@ -603,24 +680,29 @@
 
     <script>
         // ==================== CONFIGURATION ====================
+        const ADMIN_PASSWORD = "SpYkO91420!";
         const CATEGORIES = ["FPS", "MMORPG", "ActionRPG"];
         
-        // ==================== VOS VIDÉOS (MODIFIEZ ICI !) ====================
-        // Pour ajouter une vidéo, copiez une ligne comme celle-ci et modifiez les infos :
-        // { id: 1, title: "Titre", description: "Description", videoId: "ID_YOUTUBE", date: "2024-01-01", categories: ["FPS"] }
-        
-        let videos = [
+        // ==================== VOS VIDÉOS ====================
+        // Stockage dans localStorage (persistant même après fermeture)
+        let videos = JSON.parse(localStorage.getItem('spyko_videos')) || [
             {
                 id: 1,
                 title: "Mon premier POV Gaming",
                 description: "Découvre mes meilleurs moments de jeu !",
                 videoId: "dQw4w9WgXcQ",
-                date: "2024-03-23",
+                date: new Date().toISOString().split('T')[0],
                 categories: ["FPS"]
             }
         ];
         
-        // ==================== ÉTAT ====================
+        // Sauvegarde initiale si nécessaire
+        if (JSON.parse(localStorage.getItem('spyko_videos')) === null) {
+            localStorage.setItem('spyko_videos', JSON.stringify(videos));
+        }
+        
+        // ==================== ÉTAT ADMIN ====================
+        let isAdmin = localStorage.getItem('spyko_isAdmin') === 'true';
         let currentVideoId = null;
         let player = null;
         let currentFilter = {
@@ -630,12 +712,66 @@
 
         // ==================== INITIALISATION ====================
         document.addEventListener('DOMContentLoaded', () => {
+            updateAdminUI();
             renderCategoriesFilter();
             filterVideos();
         });
 
+        // ==================== AUTHENTIFICATION ADMIN ====================
+        function openLoginModal() {
+            const modal = document.getElementById('loginModal');
+            if (modal) modal.classList.add('active');
+            document.getElementById('adminPassword').value = '';
+            document.getElementById('loginError').textContent = '';
+        }
+
+        function closeLoginModal() {
+            const modal = document.getElementById('loginModal');
+            if (modal) modal.classList.remove('active');
+        }
+
+        function checkPassword() {
+            const password = document.getElementById('adminPassword').value;
+            
+            if (password === ADMIN_PASSWORD) {
+                isAdmin = true;
+                localStorage.setItem('spyko_isAdmin', 'true');
+                closeLoginModal();
+                updateAdminUI();
+                filterVideos();
+            } else {
+                document.getElementById('loginError').textContent = 'MOT DE PASSE INCORRECT';
+            }
+        }
+
+        function logout() {
+            isAdmin = false;
+            localStorage.removeItem('spyko_isAdmin');
+            updateAdminUI();
+            filterVideos();
+        }
+
+        function updateAdminUI() {
+            const userInfo = document.getElementById('userInfo');
+            const loginBtn = document.getElementById('loginBtn');
+            const adminActions = document.getElementById('adminActions');
+            
+            if (userInfo) userInfo.classList.toggle('admin', isAdmin);
+            if (loginBtn) loginBtn.style.display = isAdmin ? 'none' : 'block';
+            if (adminActions) adminActions.style.display = isAdmin ? 'flex' : 'none';
+        }
+
         // ==================== GESTION DES VIDÉOS ====================
+        function saveVideos() {
+            localStorage.setItem('spyko_videos', JSON.stringify(videos));
+        }
+
         function addVideo() {
+            if (!isAdmin) {
+                alert('Vous devez être connecté en admin pour publier');
+                return;
+            }
+            
             const title = document.getElementById('videoTitle')?.value.trim();
             const description = document.getElementById('videoDescription')?.value.trim();
             const link = document.getElementById('youtubeLink')?.value.trim();
@@ -656,25 +792,29 @@
                 categories.push(cb.value);
             });
 
-            const newId = Math.max(...videos.map(v => v.id), 0) + 1;
+            const newId = videos.length > 0 ? Math.max(...videos.map(v => v.id)) + 1 : 1;
             const newVideo = {
                 id: newId,
                 title,
                 description: description || '',
                 videoId,
                 date: new Date().toISOString().split('T')[0],
-                categories
+                categories: categories.length > 0 ? categories : ["FPS"]
             };
 
             videos.push(newVideo);
+            saveVideos();
             closeAddModal();
             filterVideos();
-            alert('Vidéo ajoutée !');
+            alert('Vidéo publiée avec succès !');
         }
 
         function deleteVideo(id) {
+            if (!isAdmin) return;
+            
             if (confirm('SUPPRIMER CETTE VIDÉO ?')) {
                 videos = videos.filter(v => v.id !== id);
+                saveVideos();
                 filterVideos();
                 alert('Vidéo supprimée !');
             }
@@ -738,6 +878,11 @@
         }
 
         function openAddModal() {
+            if (!isAdmin) {
+                alert('Vous devez être connecté en admin pour publier');
+                return;
+            }
+            
             const modal = document.getElementById('addVideoModal');
             if (modal) modal.classList.add('active');
             
@@ -805,7 +950,7 @@
                 grid.innerHTML = `
                     <div class="no-videos">
                         <h2>🎮 AUCUNE VIDÉO</h2>
-                        <button class="add-video-btn" onclick="openAddModal()">PUBLIER</button>
+                        ${isAdmin ? '<button class="add-video-btn" onclick="openAddModal()">PUBLIER</button>' : ''}
                     </div>
                 `;
                 return;
@@ -836,9 +981,11 @@
                             <span>📅 ${video.date || new Date().toLocaleDateString()}</span>
                         </div>
 
-                        <div class="admin-controls show">
-                            <button class="delete-btn" onclick="deleteVideo(${video.id})">🗑️ SUPPRIMER</button>
-                        </div>
+                        ${isAdmin ? `
+                            <div class="admin-controls show">
+                                <button class="delete-btn" onclick="deleteVideo(${video.id})">🗑️ SUPPRIMER</button>
+                            </div>
+                        ` : ''}
                     </div>
                 </div>
             `).join('');
