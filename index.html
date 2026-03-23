@@ -1162,4 +1162,14 @@
                         </div>
                     </div>
                 `;
-            }).join
+            }).join('');
+        }
+
+        window.onclick = (event) => {
+            if (event.target.classList.contains('modal')) {
+                event.target.classList.remove('active');
+            }
+        };
+    </script>
+</body>
+</html>
