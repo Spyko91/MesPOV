@@ -1,2 +1,3 @@
 # MesPOV
-[https://spyko91.github.io/MesPOV/](http://spyko-gaming.fr/)
+
+http://spyko-gaming.fr/
