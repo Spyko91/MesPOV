@@ -615,9 +615,9 @@
             
             <h3 style="color:#ff0; font-size:10px; margin:10px 0;">CATÉGORIES</h3>
             <div class="categories-selector" id="categoriesSelector">
-                <label class="category-checkbox"><input type="checkbox" value="FPS"> FPS</label>
-                <label class="category-checkbox"><input type="checkbox" value="MMORPG"> MMORPG</label>
-                <label class="category-checkbox"><input type="checkbox" value="ActionRPG"> ActionRPG</label>
+                <label class="category-checkbox"><input type="checkbox" value="TANK"> TANK</label>
+                <label class="category-checkbox"><input type="checkbox" value="DPS"> DPS</label>
+                <label class="category-checkbox"><input type="checkbox" value="SUPPORT"> SUPPORT</label>
             </div>
             
             <div class="modal-buttons">
@@ -668,7 +668,7 @@
     <script>
         // ==================== CONFIGURATION ====================
         const ADMIN_PASSWORD = "SpYkO91420!";
-        const CATEGORIES = ["FPS", "MMORPG", "ActionRPG", "Decouverte"];
+        const CATEGORIES = ["TANK", "DPS", "SUPPORT", "HEAL"];
         
         // ==================== VOS VIDÉOS ====================
         let videos = [
@@ -678,7 +678,7 @@
                 description: "Hello , si tu veux rejoindre notre guilde viens sur youtube et vas dans description tu auras toutes les infos necessaire ainsi que le discord",
                 videoId: "uF5mlwbIubw",
                 date: "2025-09-06",
-                categories: ["MMORPG"]
+                categories: ["TANK"]
             },
             {
                 id: 2,
@@ -686,7 +686,7 @@
                 description: "Hello , si tu veux rejoindre notre guilde viens sur youtube et vas dans description tu auras toutes les infos necessaire ainsi que le discord",
                 videoId: "HSL6FQGnlNI",
                 date: "2026-03-08",
-                categories: ["MMORPG"]
+                categories: ["TANK"]
             },
             {
                 id: 3,
@@ -694,7 +694,7 @@
                 description: "Hello , si tu veux rejoindre notre guilde viens sur youtube et vas dans description tu auras toutes les infos necessaire ainsi que le discord",
                 videoId: "waq3kxE_Ke8",
                 date: "2026-03-19",
-                categories: ["MMORPG"]
+                categories: ["TANK"]
             },
             {
                 id: 4,
@@ -702,7 +702,7 @@
                 description: "Hello , si tu veux rejoindre notre guilde viens sur youtube et vas dans description tu auras toutes les infos necessaire ainsi que le discord",
                 videoId: "h_pt5rVe2P0",
                 date: "2026-03-22",
-                categories: ["MMORPG"]
+                categories: ["TANK"]
             },
             {
                 id: 5,
@@ -710,7 +710,7 @@
                 description: "Hello , si tu veux rejoindre notre guilde viens sur youtube et vas dans description tu auras toutes les infos necessaire ainsi que le discord",
                 videoId: "N6yGnzEgB5w",
                 date: "2026-03-22",
-                categories: ["MMORPG"]
+                categories: ["SUPPORT"]
             },
         ];
         
@@ -808,7 +808,7 @@
                 description: description || '',
                 videoId,
                 date: new Date().toISOString().split('T')[0],
-                categories: categories.length > 0 ? categories : ["FPS"]
+                categories: categories.length > 0 ? categories : ["TANK"]
             };
 
             videos.push(newVideo);
